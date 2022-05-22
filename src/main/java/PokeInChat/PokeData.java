@@ -3,11 +3,8 @@ package PokeInChat;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Text.Builder;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 public class PokeData {
    public static Boolean isNull(Pokemon slot) {
@@ -84,28 +81,45 @@ public class PokeData {
 			   return Text.of(new Object[] {TextColors.YELLOW, forma});
 	   }
    }
+   static String texture(Pokemon pokemon) {
+	   String textura = pokemon.getCustomTexture();
+	   StringBuffer textura2 = new StringBuffer(textura);
+	   
+	   for(int i = 0; i < textura2.length(); i++){
+	        Character letra = textura2.charAt(i);
+	        if(i == 0){
+	            letra = Character.toUpperCase(letra);
+	            textura2.setCharAt(i, letra);
+	        }
+	        else if((i > 0) && (textura2.charAt(i - 1) == ' ')){
+	            letra = Character.toUpperCase(letra);
+	            textura2.setCharAt(i, letra);
+	        }
+	    }
+	   textura = textura2.toString();
+	   return textura;
+   }
    @SuppressWarnings("deprecation")
    public static Text getHoverText(Pokemon pokemonData) {
-      Builder statBuilder = Text.builder();
-      statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + pokemonData.getSpecies().name + "&8]&r")});
       Text statHover = Text.of(new Object[]{
     		  //pokemon + level
     		  TextColors.LIGHT_PURPLE, TextStyles.BOLD, pokemonData.isShiny() ? Text.of(new Object[]{TextColors.YELLOW, "★"}) : Text.EMPTY, pokemonData.getSpecies().name, pokemonData.getGender().toString() == "None" ? Text.EMPTY : Text.of(new Object[]{pokemonData.getGender().toString() == "Male" ? Text.of(new Object[]{TextColors.DARK_AQUA, " ♂"}) : Text.of(new Object[]{TextColors.DARK_PURPLE, " ♀"})}), TextStyles.RESET, TextColors.DARK_GRAY, " | ", TextColors.GRAY, "Level: ", TextColors.GRAY, pokemonData.getLevel(),
-			  //nature
-			  Text.NEW_LINE, TextColors.GRAY, "Nature: ", TextColors.YELLOW, pokemonData.getNature().toString(), TextColors.DARK_GRAY, " [", pokemonData.getNature().increasedStat.name() == "None" ? Text.of(new Object[]{TextColors.GRAY, "Neutro"}) : Text.of(new Object[]{aumenta(pokemonData), TextColors.DARK_GRAY, " | ", diminui(pokemonData)}), TextColors.DARK_GRAY, "]",
+    		  //nature
+			  Text.NEW_LINE, "  ", TextColors.GRAY, "Nature: ", TextColors.YELLOW, pokemonData.getNature().toString(), TextColors.DARK_GRAY, " [", pokemonData.getNature().increasedStat.name() == "None" ? Text.of(new Object[]{TextColors.GRAY, "Neutro"}) : Text.of(new Object[]{aumenta(pokemonData), TextColors.DARK_GRAY, " | ", diminui(pokemonData)}), TextColors.DARK_GRAY, "]",
 			  //habilidade
-			  Text.NEW_LINE, TextColors.GRAY, "Ability: ", TextColors.YELLOW, pokemonData.getAbilitySlot() != 2 ? TextColors.YELLOW : TextColors.GOLD, pokemonData.getAbility().getName(),
+			  Text.NEW_LINE, "  ", TextColors.GRAY, "Ability: ", TextColors.YELLOW, pokemonData.getAbilitySlot() != 2 ? Text.of(new Object[]{TextColors.YELLOW, pokemonData.getAbility().getName()}) : Text.of(new Object[]{TextColors.GOLD, pokemonData.getAbility().getName(), TextColors.WHITE, " (", TextColors.GOLD, "HA", TextColors.WHITE, ")"}),
 			  //forma
-			  Text.NEW_LINE, TextColors.GRAY, "Forma: ", form(pokemonData), 
+			  Text.NEW_LINE, "  ", TextColors.GRAY, "Forma: ", form(pokemonData), 
 			  //breed
-			  Text.NEW_LINE, TextColors.GRAY, "Breed: ", isBreed(pokemonData), pokemonData.getCustomTexture().toString() == "" ? Text.EMPTY : (new Object[]{Text.NEW_LINE, TextColors.GRAY, "Textura: ", TextColors.YELLOW, pokemonData.getCustomTexture()}),
+			  Text.NEW_LINE, "  ", TextColors.GRAY, "Breed: ", isBreed(pokemonData), 
+			  //textura
+			  pokemonData.getCustomTexture().toString() == "" ? Text.EMPTY : (Text.of(new Object[]{Text.NEW_LINE, TextColors.GRAY, "Textura: ", TextColors.YELLOW, texture(pokemonData)})),
 			  //ivs
-			  Text.NEW_LINE, Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "IVs: ", TextStyles.RESET, TextColors.GRAY, pokemonData.getIVs().getTotal(), TextColors.DARK_GRAY, "/", TextColors.GRAY, "186", TextColors.DARK_GRAY, " (", TextColors.GRAY, pokemonData.getIVs().getTotal() * 100 / 186, "%", TextColors.DARK_GRAY, ")", Text.NEW_LINE, TextColors.GREEN, pokemonData.getIVs().hp, TextColors.DARK_GRAY, " | ", TextColors.RED, pokemonData.getIVs().attack, TextColors.DARK_GRAY, " | ", TextColors.GOLD, pokemonData.getIVs().defence, TextColors.DARK_GRAY, " | ", TextColors.LIGHT_PURPLE, pokemonData.getIVs().specialAttack, TextColors.DARK_GRAY, " | ", TextColors.YELLOW, pokemonData.getIVs().specialDefence, TextColors.DARK_GRAY, " | ", TextColors.AQUA, pokemonData.getIVs().speed,
+			  Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "IVs: ", TextStyles.RESET, TextColors.GRAY, pokemonData.getIVs().getTotal(), TextColors.DARK_GRAY, "/", TextColors.GRAY, "186", TextColors.DARK_GRAY, " (", TextColors.GRAY, pokemonData.getIVs().getTotal() * 100 / 186, "%", TextColors.DARK_GRAY, ")", Text.NEW_LINE, "  ", TextColors.GREEN, pokemonData.getIVs().hp, TextColors.DARK_GRAY, " | ", TextColors.RED, pokemonData.getIVs().attack, TextColors.DARK_GRAY, " | ", TextColors.GOLD, pokemonData.getIVs().defence, TextColors.DARK_GRAY, " | ", TextColors.LIGHT_PURPLE, pokemonData.getIVs().specialAttack, TextColors.DARK_GRAY, " | ", TextColors.YELLOW, pokemonData.getIVs().specialDefence, TextColors.DARK_GRAY, " | ", TextColors.AQUA, pokemonData.getIVs().speed,
 			  //evs
-			  Text.NEW_LINE, Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "EVs: ", TextStyles.RESET, TextColors.GRAY, pokemonData.getEVs().getTotal(), TextColors.DARK_GRAY, "/", TextColors.GRAY, "510", TextColors.DARK_GRAY, " (", TextColors.GRAY, pokemonData.getEVs().getTotal() * 100 / 186, "%", TextColors.DARK_GRAY, ")", Text.NEW_LINE, TextColors.GREEN, pokemonData.getEVs().hp, TextColors.DARK_GRAY, " | ", TextColors.RED, pokemonData.getEVs().attack, TextColors.DARK_GRAY, " | ", TextColors.GOLD, pokemonData.getEVs().defence, TextColors.DARK_GRAY, " | ", TextColors.LIGHT_PURPLE, pokemonData.getEVs().specialAttack, TextColors.DARK_GRAY, " | ", TextColors.YELLOW, pokemonData.getEVs().specialDefence, TextColors.DARK_GRAY, " | ", TextColors.AQUA, pokemonData.getEVs().speed,
+			  Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "EVs: ", TextStyles.RESET, TextColors.GRAY, pokemonData.getEVs().getTotal(), TextColors.DARK_GRAY, "/", TextColors.GRAY, "510", TextColors.DARK_GRAY, " (", TextColors.GRAY, pokemonData.getEVs().getTotal() * 100 / 186, "%", TextColors.DARK_GRAY, ")", Text.NEW_LINE, "  ",TextColors.GREEN, pokemonData.getEVs().hp, TextColors.DARK_GRAY, " | ", TextColors.RED, pokemonData.getEVs().attack, TextColors.DARK_GRAY, " | ", TextColors.GOLD, pokemonData.getEVs().defence, TextColors.DARK_GRAY, " | ", TextColors.LIGHT_PURPLE, pokemonData.getEVs().specialAttack, TextColors.DARK_GRAY, " | ", TextColors.YELLOW, pokemonData.getEVs().specialDefence, TextColors.DARK_GRAY, " | ", TextColors.AQUA, pokemonData.getEVs().speed,
 			  //moves
-			  Text.NEW_LINE, Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "Moves:", TextStyles.RESET, Text.NEW_LINE, TextColors.GRAY, pokemonData.getMoveset().get(0) != null ? pokemonData.getMoveset().get(0).toString() : "N/A", TextColors.DARK_GRAY, " | ", TextColors.GRAY, pokemonData.getMoveset().get(1) != null ? pokemonData.getMoveset().get(1).toString() : "N/A", Text.NEW_LINE, TextColors.GRAY, pokemonData.getMoveset().get(2) != null ? pokemonData.getMoveset().get(2).toString() : "N/A", TextColors.DARK_GRAY, " | ", TextColors.GRAY, pokemonData.getMoveset().get(3) != null ? pokemonData.getMoveset().get(3).toString() : "N/A"});
-      statBuilder.onHover(TextActions.showText(statHover));
-      return Text.of(new Object[]{statBuilder.build()});
+			  Text.NEW_LINE, TextColors.YELLOW, TextStyles.BOLD, "Moves:", TextStyles.RESET, Text.NEW_LINE, "  ", TextColors.GRAY, pokemonData.getMoveset().get(0) != null ? pokemonData.getMoveset().get(0).toString() : "N/A", TextColors.DARK_GRAY, " | ", TextColors.GRAY, pokemonData.getMoveset().get(1) != null ? pokemonData.getMoveset().get(1).toString() : "N/A", Text.NEW_LINE, "  ", TextColors.GRAY, pokemonData.getMoveset().get(2) != null ? pokemonData.getMoveset().get(2).toString() : "N/A", TextColors.DARK_GRAY, " | ", TextColors.GRAY, pokemonData.getMoveset().get(3) != null ? pokemonData.getMoveset().get(3).toString() : "N/A"});
+      return Text.of(new Object[]{statHover});
    }
 }
