@@ -1,6 +1,7 @@
 package PokeInChat;
 
 import java.util.concurrent.TimeUnit;
+
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -29,7 +30,7 @@ import com.pixelmonmod.pixelmon.storage.PlayerPartyStorage;
 @Plugin(
 		   id = "pokeanuncio",
 		   name = "PokeAnúncio",
-		   version = "1.3.1",
+		   version = "1.3.2",
 		   description = "Anuncie compras/vendas",
 		   authors = {"Tarik"}
 		)
@@ -47,74 +48,37 @@ public class Comando {
 				.executor((CommandSource src, CommandContext args) -> {
 					  Player player = (Player)src;
 						  if(!player.hasTag("pokeinchatdelaycommand")) {
-							  String msg = args.<String>getOne("message").get();
-							  Text mensagem = Text.of(TextColors.AQUA, TextSerializers.FORMATTING_CODE.deserialize(msg));
+							  String msg = args.getOne("message").get().toString();
+							  Text mensagem;
 							  if(msg.contains("@poke1") || msg.contains("@poke2") || msg.contains("@poke3") || msg.contains("@poke4") || msg.contains("@poke5") || msg.contains("@poke6") || msg.contains("@i@")) {
 							      PlayerPartyStorage playerParty = Pixelmon.storageManager.getParty(player.getUniqueId());
-							      if (msg.contains("@poke1")) {
-					                  if (!PokeData.isNull(playerParty.get(0))) {
-					                    Builder statBuilder = Text.builder();
-										mensagem = Text.of(new Object[]{mensagem.replace("@poke1", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(0).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(0)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l1&b!"));
-					                  }
-					               }
-
-					               if (msg.contains("@poke2")) {
-					                  if (!PokeData.isNull(playerParty.get(1))) {
-					                	 Builder statBuilder = Text.builder();
-					                     mensagem = Text.of(new Object[]{mensagem.replace("@poke2", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(1).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(1)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l2&b!"));
-					                  }
-					               }
-
-					               if (msg.contains("@poke3")) {
-					                  if (!PokeData.isNull(playerParty.get(2))) {
-					                	 Builder statBuilder = Text.builder();
-					                     mensagem = Text.of(new Object[]{mensagem.replace("@poke3", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(2).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(2)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l3&b!"));
-					                  }
-					               }
-
-					               if (msg.contains("@poke4")) {
-					                  if (!PokeData.isNull(playerParty.get(3))) {
-					                	 Builder statBuilder = Text.builder();
-					                     mensagem = Text.of(new Object[]{mensagem.replace("@poke4", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(3).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(3)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l4&b!"));
-					                  }
-					               }
-
-					               if (msg.contains("@poke5")) {
-					                  if (!PokeData.isNull(playerParty.get(4))) {
-					                	 Builder statBuilder = Text.builder();
-					                     mensagem = Text.of(new Object[]{mensagem.replace("@poke5", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(4).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(4)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l5&b!"));
-					                  }
-					               }
-
-					               if (msg.contains("@poke6")) {
-					                  if (!PokeData.isNull(playerParty.get(5))) {
-					                	 Builder statBuilder = Text.builder();
-					                     mensagem = Text.of(new Object[]{mensagem.replace("@poke6", statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(5).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(5)))).build())});
-					                  } else {
-					                     player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l6&b!"));
-					                  }
-					               }
-							      if (msg.contains("@i@")) {
+							      for(int i = 0; i < 6; i++) {
+							    	  msg = msg.replaceFirst("@poke" + (i+1), "@MudarAkiPoke" + i);
+							      }
+							      msg = msg.replaceFirst("@i@", "@MudarAkiItem");
+							      mensagem = Text.of(TextColors.AQUA, TextSerializers.FORMATTING_CODE.deserialize(msg));
+							      for(int i = 0; i < 6; i++) {
+							    	  if(msg.contains("@MudarAkiPoke" + i)) {
+							    		  if (!PokeData.isNull(playerParty.get(i))) {
+							    			  Builder statBuilder = Text.builder();
+							    			  mensagem = Text.of(new Object[]{mensagem.replace("@MudarAkiPoke" + i, statBuilder.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&r&a" + playerParty.get(i).getSpecies().name + "&8]&r")}).onHover(TextActions.showText(PokeData.getHoverText(playerParty.get(i)))).build())});
+							    		  } else {
+							    			  player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê não tem pokemon no slot &l1&b!"));
+							    		  }
+							    	  }
+							      }
+							      if (msg.contains("@MudarAkiItem")) {
 			                        ItemStack hand = player.getItemInHand(HandTypes.MAIN_HAND).get();
 			                        if (!hand.getType().equals(ItemTypes.NONE)) {
 			                        	Builder item = Text.builder();
-			                        	String itemName = hand.getType().getTranslation().get();
-			                        	item.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&a" + hand.getQuantity() + " " + itemName + "&8]&r")});
-			                        	item.onHover(TextActions.showItem(hand.createSnapshot()));
-			                            mensagem = Text.of(mensagem.replace("@i@", Text.of(new Object[] {item})));
+			                        	item.append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&8[&a" + hand.getQuantity() + " " + hand.getTranslation().get() + "&8]&r")});
+			                        	if(!hand.getType().getName().contains("shulker")) {
+			                        		item.onHover(TextActions.showItem(hand.createSnapshot()));
+			                        	}
+			                            mensagem = Text.of(mensagem.replace("@MudarAkiItem", Text.of(new Object[] {item})));
 			                        } else {
-							             player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê está sem item na mão!"));
-							          }
+			                        	player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize("&bVocê está sem item na mão!"));
+			                        }
 			                      }
 							      Text inicio = Text.builder().append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("{chat}" + "{name}" + " &b»&r ")}).build();
 							      Text name = Text.builder().append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&f" + player.getName() + "&r")}).onClick(TextActions.suggestCommand("/tell " + player.getName() + " ")).onHover(TextActions.showText(Text.of(new Object[] {TextColors.YELLOW, "Clique para mandar um tell"}))).build();
@@ -133,7 +97,7 @@ public class Comando {
 								  Text inicio = Text.builder().append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("{chat}" + "{name}" + " &b»&r ")}).build();
 							      Text name = Text.builder().append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&f" + player.getName() + "&r")}).onClick(TextActions.suggestCommand("/tell " + player.getName() + " ")).onHover(TextActions.showText(Text.of(new Object[] {TextColors.YELLOW, "Clique para mandar um tell"}))).build();
 							      Text chat = Text.builder().append(new Text[]{TextSerializers.FORMATTING_CODE.deserialize("&b&l[Anúncio]&r ")}).onClick(TextActions.suggestCommand("/anuncio ")).onHover(TextActions.showText(Text.of(new Object[] {TextColors.YELLOW, "Clique para anunciar algo"}))).build();
-							      Text finalmessage = Text.builder().append(inicio.replace("{name}", name).replace("{chat}", chat)).append(new Text[]{mensagem}).build();
+							      Text finalmessage = Text.builder().append(inicio.replace("{name}", name).replace("{chat}", chat)).append(new Text[]{Text.of(TextColors.AQUA, TextSerializers.FORMATTING_CODE.deserialize(msg))}).build();
 							      MessageChannel.TO_ALL.send(Text.of(finalmessage));
 							      player.addTag("pokeinchatdelaycommand");
 							      Task.builder().delay(1, TimeUnit.MINUTES).execute((Runnable)(new Runnable() {
@@ -150,6 +114,7 @@ public class Comando {
 						  }
 				})
 				.build();
+		
 		CommandSpec info = CommandSpec.builder()
 				.description(Text.of("Veja informações sobre seu pokemon."))
 				.arguments(GenericArguments.onlyOne(GenericArguments.integer(Text.of("slot"))))
